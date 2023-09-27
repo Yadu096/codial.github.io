@@ -22,11 +22,13 @@ module.exports.profile = function(req, res){
                 user_details: user
             });
         }).catch((err)=>{
-            console.log(err, " Error occured in fetching the user");
+            console.log(err, " Error occured in fetching the user, redirecting to the sign in page");
+            return res.redirect('/user/sign-in');
         })
 
     }else{
-        return res.redirect('/user/sign-in')
+        console.log("Please sign in again");
+        return res.redirect('/user/sign-in');
     }    
 }
 
@@ -56,8 +58,8 @@ module.exports.create = function(req, res){
             })
             
         }else{
-            console.log(user, " User already exists");
-            return res.redirect('back');
+            console.log(user, " User already exists, redirecting to sign in page");
+            return res.redirect('http://localhost:8000/user/sign-in');
         };
         
     }).catch((err)=>{
@@ -88,4 +90,9 @@ module.exports.createSession = function(req, res){
     }).catch((err)=>{
         console.log(err, " Error occured in confirming the username");
     })
+}
+
+module.exports.clearSession = function(req, res){
+    res.clearCookie('user_id');
+    return res.redirect('http://localhost:8000/user/sign-in');
 }

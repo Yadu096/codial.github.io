@@ -12,5 +12,6 @@ router.get('/profile', usersController.profile);
 
 router.post('/create', usersController.create);
 router.post('/create-session', usersController.createSession);
+router.get('/clear-session', usersController.clearSession);
 
 module.exports = router;

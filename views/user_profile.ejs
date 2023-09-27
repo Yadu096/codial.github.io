@@ -5,5 +5,9 @@
         <p>Age: <%= user_details.age %> </p>
         <p>Gender: <%= user_details.gender %> </p>
     </li>
+
+    <form action="/user/clear-session" method="get">
+        <button type="submit">Sign Out</button>
+    </form>
         
 </ol>
