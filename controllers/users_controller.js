@@ -1,35 +1,48 @@
 const User = require('../models/user');
 
 module.exports.signup = function(req, res){
+    if(req.isAuthenticated()){
+        return res.redirect('/user/profile');
+    }
+
     return res.render('user_sign_up', {
         title: "Sign Up"
     });
 }
 
 module.exports.signin = function(req, res){
+    if(req.isAuthenticated()){
+        return res.redirect('/user/profile');
+    }
+
     return res.render('user_sign_in', {
         title: "Sign In"
     });
 }
 
 module.exports.profile = function(req, res){
-    if(req.cookies.user_id){
 
-        User.findOne({_id: req.cookies.user_id}).then((user)=>{
-            res.cookie('user_id', );
-            return res.render('user_profile', {
-                title: "User Profile",
-                user_details: user
-            });
-        }).catch((err)=>{
-            console.log(err, " Error occured in fetching the user, redirecting to the sign in page");
-            return res.redirect('/user/sign-in');
-        })
+    return res.render('user_profile',{
+        title: "Profile Page"
+    });
 
-    }else{
-        console.log("Please sign in again");
-        return res.redirect('/user/sign-in');
-    }    
+    // if(req.cookies.user_id){
+
+    //     User.findOne({_id: req.cookies.user_id}).then((user)=>{
+    //         res.cookie('user_id', );
+    //         return res.render('user_profile', {
+    //             title: "User Profile",
+    //             user_details: user
+    //         });
+    //     }).catch((err)=>{
+    //         console.log(err, " Error occured in fetching the user, redirecting to the sign in page");
+    //         return res.redirect('/user/sign-in');
+    //     })
+
+    // }else{
+    //     console.log("Please sign in again");
+    //     return res.redirect('/user/sign-in');
+    // }    
 }
 
 module.exports.create = function(req, res){
@@ -55,7 +68,7 @@ module.exports.create = function(req, res){
             }).catch((err)=>{
                 console.log(err, "Error in creating the user"); 
                 return res.redirect('back');
-            })
+            });
             
         }else{
             console.log(user, " User already exists, redirecting to sign in page");
@@ -69,30 +82,45 @@ module.exports.create = function(req, res){
 };
 
 
+// module.exports.createSession = function(req, res){
+//     //Check if user exists
+//     User.findOne({email: req.body.Email}).then((user)=>{
+//         // If user is not found
+//         if(user == undefined){
+//             console.log("Wrong username entered");
+//             return res.redirect('back');
+//         }else{
+//                 //If password doesnt not match
+//                 if(user.password != req.body.Password){
+//                     console.log("Wrong password entered");
+//                     return res.redirect('back');
+//                 }else{
+//                     res.cookie('user_id', user.id);
+//                     console.log(user.id, " signed in");
+//                     return res.redirect('/user/profile');
+//                 }
+//             }
+//     }).catch((err)=>{
+//         console.log(err, " Error occured in confirming the username");
+//     })
+// }
+
+//Create session using passport
 module.exports.createSession = function(req, res){
-    //Check if user exists
-    User.findOne({email: req.body.Email}).then((user)=>{
-        // If user is not found
-        if(user == undefined){
-            console.log("Wrong username entered");
-            return res.redirect('back');
-        }else{
-                //If password doesnt not match
-                if(user.password != req.body.Password){
-                    console.log("Wrong password entered");
-                    return res.redirect('back');
-                }else{
-                    res.cookie('user_id', user.id);
-                    console.log(user.id, " signed in");
-                    return res.redirect('/user/profile');
-                }
-            }
-    }).catch((err)=>{
-        console.log(err, " Error occured in confirming the username");
-    })
+    // console.log(user.name, " signed in");
+    return res.redirect('/user/profile');
 }
 
+//For signing out using manual authentication
 module.exports.clearSession = function(req, res){
     res.clearCookie('user_id');
     return res.redirect('http://localhost:8000/user/sign-in');
+}
+
+//For signing out using passport.js
+
+module.exports.signOut = function(req, res){
+    req.logout();
+
+    return res.redirect("/user/sign-in");
 }
