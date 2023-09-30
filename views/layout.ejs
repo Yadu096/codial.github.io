@@ -9,6 +9,9 @@
     <!-- <link rel="stylesheet" href="/css/layout.css"> -->
 
     <!-- Extract styles of individual pages -->
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/header.css">
+
     <%- style %>
 </head>
 <body>
@@ -16,7 +19,9 @@
     <%- include('_header') %>
 
     <!-- Define the variable partial -->
-    <%- body %>
+    <main id="layout-main">
+        <%- body %>
+    </main>
 
     <!-- Include footer partial -->
     <%- include('_footer') %>

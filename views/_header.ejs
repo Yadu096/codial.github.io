@@ -1,15 +1,31 @@
+
+
 <header>
-    <% if(locals.user){%>
+    <div class="flex-container">
+        <div style="display: inline;">
+            <h3>Codial</h3>
+        </div>
+
+
+        <div style="display: inline;">
+
+            <% if(locals.user){%>
         
-        <a href="/user/profile"> <%= user.name %> </a>
+                <a href="/user/profile"> <%= user.name %> </a>
+        
+                <a href="/user/sign-out"> Sign Out</a>
+        
+                <%}else{%>
+                    
+                    <a href="/user/sign-in"> Sign In </a>
+                    
+                    <a href="/user/sign-up"> Sign Up </a>
+        
+                <%} %>
 
-        <a href="/user/sign-out"> Sign Out</a>
+        </div>
+        
 
-        <%}else{%>
-            
-            <a href="/user/sign-in"> Sign In </a>
-            
-            <a href="/user/sign-up"> Sign Up </a>
-
-        <%} %>
+    </div>
+    
 </header>

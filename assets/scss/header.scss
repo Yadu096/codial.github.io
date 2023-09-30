@@ -1,0 +1,19 @@
+header{
+    background-color: cornflowerblue;
+    
+
+    .flex-container{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        a{
+            color: white;
+            font-weight: 600;
+            font-size:x-large;
+        }
+        h3{
+            color: whitesmoke;
+        }
+    }
+}
