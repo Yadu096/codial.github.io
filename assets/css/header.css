@@ -5,8 +5,6 @@ header {
     flex-direction: row;
     justify-content: space-between; }
     header .flex-container a {
-      color: white;
+      color: whitesmoke;
       font-weight: 600;
       font-size: x-large; }
-    header .flex-container h3 {
-      color: whitesmoke; }

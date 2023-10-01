@@ -18,6 +18,7 @@ router.post('/create-user', usersController.createUser);
 //Call post action
 router.post('/create-post', usersController.createPost);
 
+
 //Use passport as middleware to authenticate
 router.post('/create-session', passport.authenticate(
     'local',

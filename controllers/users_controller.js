@@ -1,10 +1,11 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const passport = require('passport');
 
 module.exports.signup = function(req, res){
     if(req.isAuthenticated()){
-        return res.redirect('/user/profile');
+        return res.redirect('/');
     }
 
     return res.render('user_sign_up', {
@@ -14,7 +15,7 @@ module.exports.signup = function(req, res){
 
 module.exports.signin = function(req, res){
     if(req.isAuthenticated()){
-        return res.redirect('/user/profile');
+        return res.redirect('/');
     }
 
     return res.render('user_sign_in', {
@@ -149,3 +150,5 @@ module.exports.createPost = function(req, res){
 
     
 }
+
+
