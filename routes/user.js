@@ -15,11 +15,8 @@ router.get('/profile', passport.checkAuthentication, usersController.profile);
 router.post('/create-user', usersController.createUser);
 // router.post('/create-session', usersController.createSession);
 
-//Call post action
-router.post('/create-post', usersController.createPost);
 
-
-//Use passport as middleware to authenticate
+//Use passport as middleware to authenticate signing in
 router.post('/create-session', passport.authenticate(
     'local',
     {failureRedirect: '/user/sign-in'},

@@ -1,7 +1,5 @@
 const User = require('../models/user');
-const Post = require('../models/post');
-const Comment = require('../models/comment');
-const passport = require('passport');
+
 
 module.exports.signup = function(req, res){
     if(req.isAuthenticated()){
@@ -48,6 +46,7 @@ module.exports.profile = function(req, res){
     // }    
 }
 
+//Creating user in the database
 module.exports.createUser = function(req, res){
     //Check if password and confirm password are same
     if(req.body.Password != req.body.Confirm_Password){
@@ -128,27 +127,6 @@ module.exports.signOut = function(req, res){
     return res.redirect("/user/sign-in");
 }
 
-//Create posts
-module.exports.createPost = function(req, res){
-    //Check if the user is signed in
-    if(req.isAuthenticated()){
-        //Create the post
-        Post.create({
-            content: req.body.content,
-            user: req.user._id
-        }).then((post)=>{
-            console.log("New Post by: ", post.id);
-            return res.redirect('back');
-        }).catch((err)=>{
-            console.log(err, " Error in creating the post");
-            return;
-        })
-    }else{
-        console.log("Sign in to post");
-        return res.redirect('/user/sign-in');
-    }
 
-    
-}
 
 

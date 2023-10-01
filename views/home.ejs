@@ -15,7 +15,10 @@
             <h5 class="card-title"> <%= post.user.name %> posted: </h5>
         </div>
         <div class="card-body">
-            <p class="card-text"> <%= post.content %> </p>                
+            <p class="card-text"> <%= post.content %> </p>
+            <% if(locals.user && locals.user.id == post.user.id) { %>           
+                <a href="/posts/delete/<%= post.id %>" class="card-link"> Delete Post </a>  
+            <% } %>   
         </div>
         <div class="card-footer">
             <form action="/comments/create/?id='<%= post._id %>' " method="post">
@@ -30,7 +33,10 @@
             
                 <li class="list-group-item">
                     <p class="card-text"> <%= comment.content %> </p>
-                    <p class="card-text text-muted"> <%= comment.user.name %> </p>
+                    <p class="card-text text-muted" style="display: inline;"> <%= comment.user.name %> </p>
+                    <% if(locals.user && (locals.user.id == comment.user.id || locals.user.id == post.user.id)) { %>
+                        <a href="/comments/delete/<%= comment.id%> " class="card-link"> Delete Comment </a>
+                    <%}%>
                 </li>
 
             <%} %>
@@ -42,7 +48,7 @@
 
 
 
-<form action="/user/create-post" method="post" id="new-post-form">
+<form action="/posts/create" method="post" id="new-post-form">
     <textarea name="content" id="new-post-content" cols="30" rows="10" placeholder="Type here..." required></textarea>
     <input type="submit" value="Post">
 </form>
