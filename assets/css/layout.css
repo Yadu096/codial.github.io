@@ -1,2 +1,4 @@
-#layout-main {
-  height: 100%; }
+body {
+  background-color: aliceblue; }
+  body #layout-main {
+    display: flex; }

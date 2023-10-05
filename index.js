@@ -9,6 +9,8 @@ const session = require('express-session');
 const passportLocal = require('./config/passport_local_strategy');
 const MongoStore = require('connect-mongo')(session);
 const sassMiddleware = require('node-sass-middleware');
+const flash = require('connect-flash');
+const customFlashMware = require('./config/middleware');
 
 //Set up node-sass-middleware
 app.use(sassMiddleware({
@@ -29,6 +31,7 @@ app.use(cookieParser());
 
 //Set the static folder
 app.use(express.static('./assets'));
+app.use('/uploads', express.static(__dirname + 'uploads'));
 
 
 //Setup layouts
@@ -65,6 +68,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 //Set the details of the authenticated user in the locals for views to access it
 app.use(passport.setAuthenticatedUser);
+//Set up connect flash
+app.use(flash());
+app.use(customFlashMware.flashMiddleware);
 
 //Set the router
 app.use('/', require('./routes'));

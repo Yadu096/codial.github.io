@@ -1,22 +1,33 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 
-module.exports.home = function(req, res){
+module.exports.home = async function(req, res){
+
+    try{
     //Get the posts from the DB
-    Post.find({})
+    let posts = await Post.find({})
+    .sort('-createdAt')
     .populate('user')
     .populate({
         path: 'comments',
         populate: {
             path: 'user'
         }
-    }).then((posts)=>{
-        return res.render('home', {
-            title: "Home",
-            posts: posts
-        });
-    }).catch((err)=>{
-        console.log(err, " Error in fetching the posts");
     });
+
+    //Find all users and send them in the response data to show a list of friends
+    let users = await User.find({});
+
+    return res.render('home', {
+        title: "Home",
+        posts: posts,
+        users: users
+    });
+
+    }catch(err){
+        console.log(err, " Error ");
+        return;
+    }
 
     
 }

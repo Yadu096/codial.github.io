@@ -1,48 +1,79 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
-const connectMongo = require('connect-mongo');
 
 //Create posts
-module.exports.createPost = function(req, res){
-    //Check if the user is signed in to create the post
-    if(req.isAuthenticated()){
-        //Create the post
-        Post.create({
-            content: req.body.content,
-            user: req.user._id
-        }).then((post)=>{
-            console.log("New Post by: ", post.id);
-            return res.redirect('back');
-        }).catch((err)=>{
-            console.log(err, " Error in creating the post");
-            return;
-        })
-    }else{
-        console.log("Sign in to post");
-        return res.redirect('/user/sign-in');
-    }
-}
+module.exports.createPost = async function(req, res){
 
-module.exports.deletePost = function(req, res){
-    //Check if the post to be deleted exists
-    Post.findById(req.params.id).then((post)=>{
-    //Check if the user that is requesting to delete is the same as the one who created it
-    if(post.user == req.user.id){
-        Post.findByIdAndDelete(req.params.id).catch((err)=>{
-            console.log(err, "Could not delete the post");
-            return;
-        })
-        //Remove the corresponding comments as well
-        Comment.deleteMany({post: req.params.id}).catch((err)=>{
-            console.log(err, "Coould not delete the comments");
-            return;
-        });
+    try{
+        //Check if the user is signed in to create the post
+        if(req.isAuthenticated()){
+            //Create the post
+            let post = await Post.create({
+                content: req.body.content,
+                user: req.user._id
+            });
+
+
+            //Check if the coming request is ajax
+            if(req.xhr){
+
+                return res.status(200).json({
+                    data:{
+                        post: post,
+                        user: req.user
+                    },
+                    message: "Post Created!"
+                });
+            }
+
+            req.flash('success', 'Post Published');
+            return res.redirect('back');
+            
+        }else{
+            req.flash('error', 'Sign in to post');
+            return res.redirect('/user/sign-in');
+        }
+
+    }catch(err){
+        req.flash('error', err);
         return res.redirect('back');
     }
-    }).catch((err)=>{
-        console.log(err, "Could not find the post to be deleted");
-        return;
-    });
+    
+}
 
+module.exports.deletePost = async function(req, res){
+
+    try{
+        //get the post
+        let post = await Post.findById(req.params.id);
+
+
+        //Check if the user that is requesting to delete is the same as the one who created it
+        if(post.user == req.user.id){
+            await Post.findByIdAndDelete(req.params.id);
+            //Remove the associated comments as well
+            await Comment.deleteMany({post: req.params.id});
+
+            if(req.xhr){
+                return res.status(200).json({
+                    data:{
+                        post_id: req.params.id
+                    },
+                    message: "Post Deleted!"
+                })
+            }
+
+            req.flash('success', 'Post deleted successfully');
+            return res.redirect('back');
+        }else{
+            req.flash('error', 'You are not authorized to delete this post');
+            return res.redirect('back');
+        }
+
+
+    }catch(err){
+        req.flash('error', err);
+        return res.redirect('back');
+    }
 
 }

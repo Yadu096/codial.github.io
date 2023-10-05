@@ -22,6 +22,9 @@ router.post('/create-session', passport.authenticate(
     {failureRedirect: '/user/sign-in'},
 ), usersController.createSession);
 
+//Update user details
+router.post('/update-user', passport.checkAuthentication, usersController.updateUser);
+
 router.get('/clear-session', usersController.clearSession);
 
 router.get('/sign-out', usersController.signOut);

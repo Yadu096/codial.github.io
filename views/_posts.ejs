@@ -1,0 +1,40 @@
+<% for(let post of posts){ %>
+    <li class="list-group-item" id="post-<%= post._id%>">
+        <div class="card text-bg-light mb-3 mx-auto" style="max-width: 500px;">
+            <div class="card-header">
+                <h5 class="card-title"> <%= post.user.name %> posted: </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text"> <%= post.content %> </p>
+                <% if(locals.user && locals.user.id == post.user.id) { %>           
+                    <a class="delete-post-button" href="/posts/delete/<%= post._id %>" class="card-link"> Delete Post </a>  
+                <% } %>   
+            </div>
+            <div class="card-footer">
+                <form action="/comments/create" method="post" id="new-comment-form">
+                    <input type="text" name="content" placeholder="Add comments...">
+                    <input type="text" name="post" value="<%= post._id %>" hidden>
+                    <input type="submit" value="Comment">
+                </form>
+            </div>
+            <ul class="list-group list-group-flush">
+            
+                <% for(let comment of post.comments){%>
+                
+                    <li class="list-group-item" id="comment-<%= comment._id %>">
+                        <p class="card-text"> <%= comment.content %> </p>
+                        <p class="card-text text-muted" style="display: inline;"> <%= comment.user.name %> </p>
+                        <% if(locals.user && (locals.user.id == comment.user.id || locals.user.id == post.user.id)) { %>
+                            <a href="/comments/delete/<%= comment._id %> " class="card-link delete-comment-button"> Delete Comment </a>
+                        <%}%>
+                    </li>
+            
+                <% } %>
+            
+            </ul>
+      </div>    
+    </li>   
+<%} %>
+
+
+

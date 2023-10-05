@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const path = require('path');
+const fs = require('fs');
 
 
 module.exports.signup = function(req, res){
@@ -47,40 +49,37 @@ module.exports.profile = function(req, res){
 }
 
 //Creating user in the database
-module.exports.createUser = function(req, res){
-    //Check if password and confirm password are same
-    if(req.body.Password != req.body.Confirm_Password){
-        console.log("Passwords don't match");
-        return res.redirect('back');
-    };
-    //Check if user already exists
-    User.findOne({email: req.body.Email}).then((user)=>{
+module.exports.createUser =async function(req, res){
+
+    try{
+        //Check if password and confirm password are same
+        if(req.body.Password != req.body.Confirm_Password){
+            req.flash('error', 'Passwords do not match');
+            return res.redirect('back');
+        };
+        //Check if user already exists
+        let user = await User.findOne({email: req.body.Email});
+
         //If returned value of user is undefined that means user does not exist and hence create the user
         if(user==undefined){
             //Create the user
-            User.create({
+            await User.create({
                 email: req.body.Email,
                 password: req.body.Password,
                 name: req.body.Name,
                 age: req.body.Age,
                 gender: req.body.Gender
-            }).then((user)=>{
-                console.log(user);
-                return res.redirect('http://localhost:8000/user/sign-in');
-            }).catch((err)=>{
-                console.log(err, "Error in creating the user"); 
-                return res.redirect('back');
             });
-            
-        }else{
-            console.log(user, " User already exists, redirecting to sign in page");
+            req.flash('success', 'You have signed up successfully');
             return res.redirect('http://localhost:8000/user/sign-in');
-        };
-        
-    }).catch((err)=>{
-        console.log(err, "Error in finding the user"); 
+        }else{
+            req.flash('error', 'User already exists');
+            return res.redirect('http://localhost:8000/user/sign-in');
+        }
+    }catch(err){
+        req.flash('error', err);
         return res.redirect('back');
-    });
+    }
 };
 
 
@@ -107,9 +106,12 @@ module.exports.createUser = function(req, res){
 //     })
 // }
 
+
+
 //Create session using passport
 module.exports.createSession = function(req, res){
     // console.log(user.name, " signed in");
+    req.flash('success', 'Logged in successfully');
     return res.redirect('/');
 }
 
@@ -123,8 +125,47 @@ module.exports.clearSession = function(req, res){
 
 module.exports.signOut = function(req, res){
     req.logout();
+    req.flash('success', 'You have logged out succesfully');
 
     return res.redirect("/user/sign-in");
+}
+
+module.exports.updateUser = async function(req, res){
+
+    try{
+        let user = await User.findById(req.user.id);
+        //Normal parser won't be able to parse the multipart form data so we'll need the multer function here
+        User.uploadedAvatar(req, res, function(err){
+            if(err){
+                console.log("******Error", err);
+            }
+
+            user.name = req.body.name;
+            user.email = req.body.email;
+            user.age = req.body.age;
+            user.gender = req.body.gender;
+
+            
+            
+            if(req.file){
+
+                if(user.avatar){
+                    fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+                }
+
+                user.avatar = User.avatarPath +'/' + req.file.filename;
+            }
+            user.save();
+
+            req.flash('success', 'Profile updated successfully');
+            return res.redirect('back');
+        })
+
+    }catch(err){
+        console.log(err);
+        req.flash('error', err);
+        return res.redirect('back');
+    }
 }
 
 

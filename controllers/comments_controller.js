@@ -3,51 +3,65 @@ const Post = require('../models/post');
 
 
 //Create comments
-module.exports.createComment = function(req, res){
+module.exports.createComment =async function(req, res){
+    try{
+        let post = await Post.findById(req.body.post);
 
-    
-    const postId = req.body.post;
-    Post.findById(postId).then((post)=>{
-        Comment.create({
+        let comment = await Comment.create({
             content: req.body.content,
             user: req.user.id,
             post: post._id
-        }).then((comment)=>{
-            post.comments.push(comment);
-            post.save();
-            return res.redirect('back');
-        }).catch((err)=>{
-            console.log(err, " Error in creating the comment");
-            return;
-        })
-    }).catch((err)=>{
-        console.log(err, "No post to comment on");
-        return;
-    });
-    
+        });
+
+        post.comments.push(comment._id);
+        post.save();
+
+        if(req.xhr){
+            return res.status(200).json({
+                data:{
+                    comment: comment,
+                    user: req.user
+                },
+                message: "Comment Created!"
+            });
+        }
+
+        req.flash('success', 'Comment added');
+        return res.redirect('back');
+
+
+    }catch(err){
+        req.flash('error', err);
+        return res.redirect('back');
+    }
     
 }
 
 //Delete comment
-module.exports.deleteComment = function(req, res){
-    //Check if the comment to be deleted exists or not 
-    Comment.findById(req.params.id).then((comment)=>{
+module.exports.deleteComment = async function(req, res){
+
+    try{
+        //Check if the comment to be deleted exists or not 
+        let comment = await Comment.findById(req.params.id);
+
         //Check authorization
-        
         if(comment.user == req.user.id){
             const postId = comment.post;
-            Comment.findByIdAndDelete(comment.id).catch((err)=>{
-                console.log(err, "Could not delete the comment");
-                return;
-            })
-            Post.findByIdAndUpdate(postId, {$pull: {comments: comment.id}}).catch((err)=>{
-                console.log(err, " Could not find the corresponding post");
-                return;
-            });
+            //Delete the comment
+            await Comment.findByIdAndDelete(comment.id);
+
+            //Remove the commet from the associated post
+            await Post.findByIdAndUpdate(postId, {$pull: {comments: comment.id}});
+
+            req.flash('success', 'Comment deleted successfully');
+            return res.redirect('back');
+        }else{
+            req.flash('error', 'You are not authorized to delete this comment!');
             return res.redirect('back');
         }
-    }).catch((err)=>{
-        console.log(err, " Could not find the comment to be deleted");
-        return;
-    });
+
+    }catch(err){
+        req.flash('error', err);
+        return res.redirect('back');
+    }
 }

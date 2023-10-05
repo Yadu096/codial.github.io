@@ -9,5 +9,8 @@ router.use('/user', require('./user'));
 router.use('/comments', require('./comments'));
 router.use('/posts', require('./posts'));
 
+//Router for api
+router.use('/api', require('./api'));
+
 
 module.exports = router;
