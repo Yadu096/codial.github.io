@@ -111,7 +111,7 @@ module.exports.createUser =async function(req, res){
 //Create session using passport
 module.exports.createSession = function(req, res){
     // console.log(user.name, " signed in");
-    req.flash('success', 'Logged in successfully');
+    req.flash('success', ' Logged in successfully');
     return res.redirect('/');
 }
 

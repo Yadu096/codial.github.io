@@ -32,16 +32,23 @@ module.exports.index = async function(req, res){
 //Action for deleting post on APi request
 module.exports.delete = async function(req, res){
     try{
-        
-        //Find and Delete the post 
-        await Post.findByIdAndDelete(req.params.id);
-        //Remove the associated comments as well
-        await Comment.deleteMany({post: req.params.id});
+        //Get the post 
+        let post = await Post.findById(req.params.id);
+        if(post.user == req.user.id){
+            //Find and Delete the post 
+            await Post.findByIdAndDelete(req.params.id);
+            //Remove the associated comments as well
+            await Comment.deleteMany({post: req.params.id});
 
-        return res.json(200, {
-            post: post,
-            sandesh: "Post and associated comments are deleted succesfully"
-        });
+            return res.json(200, {
+                post: post,
+                sandesh: "Post and associated comments are deleted succesfully"
+            });
+        }else{
+            return res.json(401, {
+                sandesh: "You are not authorized to delete this post"
+            });
+        }
 
     }catch(err){
         console.log('error', err);

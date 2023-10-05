@@ -15,7 +15,7 @@ passport.use(new LocalStrategy({
                 req.flash('error', 'Invalid Username/Password');
                 return done(null, false);
             }
-
+            req.flash('success', 'Authentication Complete');
             return done(null, user);
         }).catch((err)=>{
             req.flash('error', err); 
