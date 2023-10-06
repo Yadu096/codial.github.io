@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const path = require('path');
 const fs = require('fs');
+const nodeMailer = require('../mailers/users_mailer');
 
 
 module.exports.signup = function(req, res){
@@ -63,13 +64,15 @@ module.exports.createUser =async function(req, res){
         //If returned value of user is undefined that means user does not exist and hence create the user
         if(user==undefined){
             //Create the user
-            await User.create({
+            let user = await User.create({
                 email: req.body.Email,
                 password: req.body.Password,
                 name: req.body.Name,
                 age: req.body.Age,
                 gender: req.body.Gender
             });
+            //Send mail to the new user created
+            nodeMailer.newUser(user);
             req.flash('success', 'You have signed up successfully');
             return res.redirect('http://localhost:8000/user/sign-in');
         }else{
