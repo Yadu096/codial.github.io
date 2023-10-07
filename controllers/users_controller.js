@@ -2,6 +2,8 @@ const User = require('../models/user');
 const path = require('path');
 const fs = require('fs');
 const nodeMailer = require('../mailers/users_mailer');
+// const queue = require('../config/kue');
+// const usersEmailWorker = require('../workers/users_email_worker');
 
 
 module.exports.signup = function(req, res){
@@ -73,6 +75,17 @@ module.exports.createUser =async function(req, res){
             });
             //Send mail to the new user created
             nodeMailer.newUser(user);
+
+            //Following code is for enqueuing the task of sending welcome-emails to the new users created at a later time
+            // let job = queue.create('emails', user).save(function(err){
+            //     if(err){
+            //         console.log(err, "***Error occured in queuing the job");
+            //         return;
+            //     }
+            //     console.log('Job enqueued', job.id);
+            // });
+
+
             req.flash('success', 'You have signed up successfully');
             return res.redirect('http://localhost:8000/user/sign-in');
         }else{
