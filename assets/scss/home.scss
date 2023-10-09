@@ -7,11 +7,16 @@ body{
         width: 70%;
     }
 
-    #friends-section{
+    #friends-users-section{
         background-color: rgb(246, 246, 231);
-        padding: 10px;
+        padding: 2px;
         border-left: 2px solid lightgray;
         width: 30%;
         height: 100vh;
+
+        .flex-container{
+            display: flex;
+            flex-direction: column;
+        }
     }
 }

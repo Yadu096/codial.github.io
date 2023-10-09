@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
+const Like = require('../models/like');
 
 //Create posts
 module.exports.createPost = async function(req, res){
@@ -17,10 +18,11 @@ module.exports.createPost = async function(req, res){
             //Check if the coming request is ajax
             if(req.xhr){
 
+                post = await post.populate('user');
+
                 return res.status(200).json({
                     data:{
-                        post: post,
-                        user: req.user
+                        post: post
                     },
                     message: "Post Created!"
                 });
@@ -50,6 +52,11 @@ module.exports.deletePost = async function(req, res){
 
         //Check if the user that is requesting to delete is the same as the one who created it
         if(post.user == req.user.id){
+
+            // delete the associated likes for the post and all its comments' likes too
+            await Like.deleteMany({likeable: post, onModel: 'Post'});
+            await Like.deleteMany({_id: {$in: post.comments}});
+
             await Post.findByIdAndDelete(req.params.id);
             //Remove the associated comments as well
             await Comment.deleteMany({post: req.params.id});
@@ -73,6 +80,7 @@ module.exports.deletePost = async function(req, res){
 
     }catch(err){
         req.flash('error', err);
+        console.log(err);
         return res.redirect('back');
     }
 

@@ -1,5 +1,6 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
+const Like = require('../models/like');
 
 
 //Create comments
@@ -17,11 +18,12 @@ module.exports.createComment =async function(req, res){
         post.save();
 
         if(req.xhr){
+            //Populate user name
+            comment = await comment.populate('user');
+
             return res.status(200).json({
-                data:{
-                    comment: comment,
-                    user: req.user
-                },
+                
+                comment: comment,
                 message: "Comment Created!"
             });
         }
@@ -47,11 +49,23 @@ module.exports.deleteComment = async function(req, res){
         //Check authorization
         if(comment.user == req.user.id){
             const postId = comment.post;
+
+            //Delete the associated likes
+            await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});
             //Delete the comment
             await Comment.findByIdAndDelete(comment.id);
 
             //Remove the commet from the associated post
             await Post.findByIdAndUpdate(postId, {$pull: {comments: comment.id}});
+
+            if (req.xhr){
+                return res.status(200).json({
+                    data: {
+                        comment_id: req.params.id
+                    },
+                    message: "Post deleted"
+                });
+            }
 
             req.flash('success', 'Comment deleted successfully');
             return res.redirect('back');

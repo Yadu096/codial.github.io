@@ -3,51 +3,59 @@
 
 
     <div class="card text-bg-light mt-3 mb-3 mx-auto text-center " style="width: 440px;">
-        <img class="card-img-top" src="<%= user.avatar %>" alt="<%= user.name %>" width="100">
+        <img class="card-img-top" src="<%= profile_user.avatar %>" alt="<%= profile_user.name %>" width="100">
         <h5 class="card-title">Your details: </h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">Name: <%= user.name %></li>
-            <li class="list-group-item">Age: <%= user.age %></li>
-            <li class="list-group-item">Gender: <%= user.gender %></li>
+            <li class="list-group-item">Name: <%= profile_user.name %></li>
+            <li class="list-group-item">Age: <%= profile_user.age %></li>
+            <li class="list-group-item">Gender: <%= profile_user.gender %></li>
         </ul>
-    
-        <form action="/user/update-user" method="post" style="display: inline-flex;" enctype="multipart/form-data">
-          
-          <div class="col-md-6">
-              <div class="card-body">
-                  <h5 class="card-title">Update your details</h5>
-                  <div class="form-floating mb-3">
-                      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" required>
-                      <label for="floatingInput">Email address</label>
-                  </div>
-                  
-                  <div class="form-floating mb-3">
-                      <input type="text" class="form-control" id="floatingInput" placeholder="Name Surname" name="name" required>
-                      <label for="floatingInput">Full Name</label>
-                  </div>
-                  <div class="form-floating mb-3">
-                      <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com" name="age" required>
-                      <label for="floatingInput">Age</label>
-                  </div>
-                  <div class="form-floating">
-                      <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="gender" required>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                      </select>
-                      <label for="floatingSelect">Gender</label>
-                  </div>
-                  <div class="form-floating mb-3">
-                    <input type="file" class="form-control" id="floatingInput" name="avatar" >
-                    <label for="floatingInput">Upload File</label>
-                  </div>
-                  <div>
-                      <button type="submit">Update</button>
-                  </div>
-              </div>
-            </div>
-          
-        </form>
+        
+        <% if(profile_user.id == locals.user.id){%>
+            
+            <form action="/user/update-user" method="post" style="display: inline-flex;" enctype="multipart/form-data">
+            
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h5 class="card-title">Update your details</h5>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" required>
+                            <label for="floatingInput">Email address</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingInput" placeholder="Name Surname" name="name" required>
+                            <label for="floatingInput">Full Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com" name="age" required>
+                            <label for="floatingInput">Age</label>
+                        </div>
+                        <div class="form-floating">
+                            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            </select>
+                            <label for="floatingSelect">Gender</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="file" class="form-control" id="floatingInput" name="avatar" >
+                            <label for="floatingInput">Upload File</label>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </div>
+                    </div>
+                </div>
+            
+            </form>
+
+        <%}else{%>
+        
+            <a href="/friends/add-friend/?to_id=<%= profile_user._id %>&from_id=<%= locals.user._id %>" class="btn btn-primary">Add Friend</a>
+
+        <%} %>
         
   </div>
 

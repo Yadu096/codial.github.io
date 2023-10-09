@@ -6,25 +6,34 @@
             </div>
             <div class="card-body">
                 <p class="card-text"> <%= post.content %> </p>
-                <% if(locals.user && locals.user.id == post.user.id) { %>           
+                <a class="toggle-like-button" data-likes="<%= post.likes.length %>" href="/likes/toggle/?id=<%= post._id%>&type=Post" class="card-link" id="toggle-likes"> 
+                    <%= post.likes.length %> Likes
+                </a>
+                <br> 
+                <% if(locals.user && locals.user.id == post.user.id) { %>
+                     
                     <a class="delete-post-button" href="/posts/delete/<%= post._id %>" class="card-link"> Delete Post </a>  
                 <% } %>   
             </div>
             <div class="card-footer">
-                <form action="/comments/create" method="post" id="new-comment-form">
-                    <input type="text" name="content" placeholder="Add comments...">
+                <form action="/comments/create" method="post" id="post-<%=post._id %>-comments-form">
+                    <input type="text" name="content" placeholder="Add comments...">    
                     <input type="text" name="post" value="<%= post._id %>" hidden>
                     <input type="submit" value="Comment">
                 </form>
             </div>
-            <ul class="list-group list-group-flush">
+            <ul class="list-group list-group-flush" id="post-comments-<%= post._id %>">
             
                 <% for(let comment of post.comments){%>
                 
                     <li class="list-group-item" id="comment-<%= comment._id %>">
                         <p class="card-text"> <%= comment.content %> </p>
                         <p class="card-text text-muted" style="display: inline;"> <%= comment.user.name %> </p>
-                        <% if(locals.user && (locals.user.id == comment.user.id || locals.user.id == post.user.id)) { %>
+                        <a class="toggle-like-button" data-likes="<%= comment.likes.length %>" href="/likes/toggle/?id=<%= comment._id%>&type=Comment" class="card-link" id="toggle-likes"> 
+                            <%= comment.likes.length %> Likes
+                        </a>
+                        <br>
+                        <% if(locals.user.id == comment.user.id) { %>
                             <a href="/comments/delete/<%= comment._id %> " class="card-link delete-comment-button"> Delete Comment </a>
                         <%}%>
                     </li>

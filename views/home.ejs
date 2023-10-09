@@ -23,27 +23,58 @@
 
 </section>
 
-<section id="friends-section">
-    
-    
-        <div class="card mx-auto text-center ">
-            <div >
-                <ul class="list-group card-body">
-                    <h5 class="card-title">Your Friends: </h5>
-                    <% for(let user of users){%>
-                        <li class="list-group-item list-group-item-action">
-                            <%= user.name %>
-                        </li>
-                    <%} %>  
-                </ul>
-            </div>
-            
+<section id="friends-users-section">
+
+    <div class="flex-container"></div>
+
+    <div class="card mx-auto text-center " style="width: 30rem;" id="firends-card">
+        <div >
+            <ul class="list-group card-body">
+                <h5 class="card-title">Your Friends: </h5>
+                <% for(let friend of friends.friendships){%>
+                    <li class="list-group-item list-group-item-action">
+                        <% if(friend.from_user.id == locals.user.id){%>
+                            <a href="/user/profile/<%= friend.to_user._id %>" class="card-link"> <%= friend.to_user.name %> </a>
+                        <%}else{%>
+                            <a href="/user/profile/<%= friend.from_user._id %>" class="card-link"> <%= friend.from_user.name %> </a>
+                        <%} %>
+                    </li>
+                <%} %>  
+            </ul>
         </div>
+        
+    </div>
+    
+    
+    <div class="card mx-auto text-center " style="width: 30rem;" id="all-users-card">
+        <div >
+            <ul class="list-group card-body">
+                <h5 class="card-title">All Users: </h5>
+                <% for(let user of users){%>
+                    <li class="list-group-item list-group-item-action">
+                        <a href="/user/profile/<%= user._id %>" class="card-link"> <%= user.name %> </a>
+                        
+                    </li>
+                <%} %>  
+            </ul>
+        </div>
+        
+    </div>
         
     
 </section>
 
 <script type="text/javascript" src="/js/home_posts.js"></script>
+<script type="text/javascript" src="/js/home_post_comments.js"></script>
+<script type="text/javascript" src="/js/toggle_likes.js"></script>
+<script>
+    $(' .toggle-like-button').each(function(){
+        let self = this;
+        let toggleLike = new ToggleLike(self);
+    });
+</script>
+
+
 
 
 

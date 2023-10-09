@@ -26,11 +26,22 @@ module.exports.signin = function(req, res){
     });
 }
 
-module.exports.profile = function(req, res){
+module.exports.profile = async function(req, res){
 
-    return res.render('user_profile',{
-        title: "Profile Page"
-    });
+    try{
+        
+        let user =await User.findById(req.params.id);
+
+        return res.render('user_profile',{
+            title: "Profile Page",
+            profile_user: user
+        });
+
+    }catch(err){
+        console.log(err);
+        return;
+    }
+    
 
     // if(req.cookies.user_id){
 
